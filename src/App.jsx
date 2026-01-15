@@ -160,10 +160,12 @@ function App() {
       ) : (
         <>
           {/* --- RENDERIZADO CONDICIONAL DE FLORES --- */}
-          {florSeleccionada === 'girasol' && <GirasolesSVG />}
-          {florSeleccionada === 'lirio' && <LirioSVG />}
-          {florSeleccionada === 'margarita' && <MargeritenSVG />}
-          {florSeleccionada === 'rosas' && <RosesSVG />}
+{/* Al agregar la 'key', obligamos a React a desmontar y montar de limpio */}
+
+{florSeleccionada === 'girasol' && <GirasolesSVG key="girasol" />}
+{florSeleccionada === 'lirio' && <LirioSVG key="lirio" />}
+{florSeleccionada === 'margarita' && <MargeritenSVG key="margarita" />}
+{florSeleccionada === 'rosa' && <RosesSVG key="rosa" />} {/* Asumiendo que agregaste la rosa */}
           
           {/* MODAL VERSÍCULO */}
           <div className={`verse-toast ${modalVisible ? 'show' : ''}`}>
@@ -214,13 +216,13 @@ function App() {
                       <span className="name">Margaritas</span>
                    </button>
 
-                   <button 
-                      className={`flower-option ${florSeleccionada === 'rosas' ? 'selected' : ''}`}
-                      onClick={() => setFlorSeleccionada('rosas')}
-                   >
-                      <span className="emoji">�</span>
-                      <span className="name">Rosas</span>
-                   </button>
+                  <button 
+   className={`flower-option ${florSeleccionada === 'rosa' ? 'selected' : ''}`}
+   onClick={() => setFlorSeleccionada('rosa')}
+>
+   <span className="emoji">🌹</span>
+   <span className="name">Rosas</span>
+</button>
                 </div>
              </div>
           </div>
