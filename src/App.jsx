@@ -161,7 +161,7 @@ const [esGirasol, setEsGirasol] = useState(true);
     <div className="main-container">
       {!comenzar ? (
         <button className="boton-inicio" onClick={() => setComenzar(true)}>
-          Para mi niña 🌸 <br/> <span>(Click para empezar)</span>
+          Para lutawas la rata  🌸 <br/> <span>(Click para empezar)</span>
         </button>
       ) : (
         <>
