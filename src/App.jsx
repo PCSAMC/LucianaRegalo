@@ -165,7 +165,7 @@ const [esGirasol, setEsGirasol] = useState(true);
         </button>
       ) : (
         <>
-         {esGirasol ? <GirasolesSVG /> : <LirioSVG />}
+         {esGirasol ? <LirioSVG /> : <GirasolesSVG />}
           
           {/* 3. BOTÓN PARA CAMBIAR DE FLOR (Agrégalo aquí, justo antes del Toast o del Player) */}
           <button 
