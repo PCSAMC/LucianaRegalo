@@ -1,0 +1,289 @@
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-oscuro: #010113;
+  /* Paleta de Girasol */
+  --girasol-petalo-inicio: #ffcc00; /* Amarillo intenso */
+  --girasol-petalo-fin: #ff9900;    /* Naranja suave */
+  --girasol-centro: #3e2723;        /* Marrón café */
+  --girasol-centro-borde: #5d4037;
+  --color-tallo: #2d6a4f;           /* Verde tallo oscuro */
+}
+
+.contenedor-girasoles {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-oscuro);
+  overflow: hidden;
+  perspective: 1000px;
+  position: relative;
+}
+
+/* --- FONDO NOCTURNO --- */
+.noche {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  filter: blur(0.1vmin);
+  background-image: radial-gradient(ellipse at top, transparent 0%, var(--color-oscuro)),
+    radial-gradient(ellipse at bottom, var(--color-oscuro), rgba(255, 200, 100, 0.1)),
+    repeating-linear-gradient(220deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px),
+    repeating-linear-gradient(189deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px),
+    repeating-linear-gradient(148deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px),
+    linear-gradient(90deg, rgb(10, 10, 10), rgb(30, 30, 30));
+}
+
+.flores {
+  position: relative;
+  transform: scale(0.9);
+}
+
+.flor {
+  position: absolute;
+  bottom: 10vmin;
+  transform-origin: bottom center;
+  z-index: 10;
+}
+
+/* --- ANIMACIONES DE VIENTO --- */
+.flor--1 { animation: movimiento-flor-1 4s linear infinite; }
+.flor--2 { left: 50%; transform: rotate(20deg); animation: movimiento-flor-2 4s linear infinite; }
+.flor--3 { left: 50%; transform: rotate(-15deg); animation: movimiento-flor-3 4s linear infinite; }
+
+/* --- ESTRUCTURA DEL GIRASOL --- */
+
+/* El Centro (Semillas) */
+.flor__centro {
+  position: absolute;
+  bottom: 55vmin; /* Altura donde termina el tallo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10vmin;
+  height: 10vmin;
+  background: radial-gradient(circle, var(--girasol-centro-borde), var(--girasol-centro));
+  border-radius: 50%;
+  z-index: 50;
+  box-shadow: inset 0 0 1vmin rgba(0,0,0,0.8);
+  /* Textura de semillas */
+  background-image: radial-gradient(rgba(0,0,0,0.6) 15%, transparent 16%), 
+                    radial-gradient(rgba(0,0,0,0.6) 15%, transparent 16%);
+  background-size: 0.8vmin 0.8vmin;
+  background-position: 0 0, 0.4vmin 0.4vmin;
+  animation: florecer 2s backwards;
+}
+
+.flor__cabeza {
+  position: absolute;
+  bottom: 55vmin;
+  left: 50%;
+  width: 0; 
+  height: 0;
+  z-index: 40;
+  animation: florecer 2s backwards;
+}
+
+/* Pétalos */
+.flor__petalo {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 3.5vmin;
+  height: 12vmin;
+  background: linear-gradient(to top, var(--girasol-petalo-inicio), var(--girasol-petalo-fin));
+  border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%;
+  transform-origin: bottom center;
+  box-shadow: inset 0 0 2px rgba(255, 140, 0, 0.5);
+  margin-left: -1.75vmin;
+  margin-bottom: 3vmin;
+}
+
+/* Rotación de pétalos */
+.flor__petalo--1 { transform: rotate(0deg); }
+.flor__petalo--2 { transform: rotate(30deg); }
+.flor__petalo--3 { transform: rotate(60deg); }
+.flor__petalo--4 { transform: rotate(90deg); }
+.flor__petalo--5 { transform: rotate(120deg); }
+.flor__petalo--6 { transform: rotate(150deg); }
+.flor__petalo--7 { transform: rotate(180deg); }
+.flor__petalo--8 { transform: rotate(210deg); }
+.flor__petalo--9 { transform: rotate(240deg); }
+.flor__petalo--10 { transform: rotate(270deg); }
+.flor__petalo--11 { transform: rotate(300deg); }
+.flor__petalo--12 { transform: rotate(330deg); }
+
+.flor__petalo:nth-child(odd) { height: 11vmin; z-index: 1; filter: brightness(0.9); }
+.flor__petalo:nth-child(even) { z-index: 2; }
+
+/* --- TALLO --- */
+.flor__tallo {
+  height: 55vmin;
+  width: 2vmin;
+  background-image: linear-gradient(to left, rgba(0,0,0,0.2), transparent, rgba(255,255,255,0.2)),
+                    linear-gradient(to top, transparent 10%, #1a472a, var(--color-tallo));
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.5);
+  animation: crecer-tallo 4s backwards;
+  border-radius: 5vmin;
+}
+
+/* Hojas del tallo */
+.flor__hoja-tallo {
+  --w: 9vmin;
+  --h: calc(var(--w) + 2vmin);
+  position: absolute;
+  top: 20%;
+  left: 90%;
+  width: var(--w);
+  height: var(--h);
+  border-top-right-radius: var(--h);
+  border-bottom-left-radius: var(--h);
+  background-image: linear-gradient(to top, rgba(20, 80, 40, 0.6), var(--color-tallo));
+  box-shadow: 0 0 1vmin rgba(0,0,0,0.2);
+}
+
+.flor__hoja-tallo--1 { transform: rotate(70deg) rotateY(30deg); }
+.flor__hoja-tallo--2 { top: 45%; transform: rotate(70deg) rotateY(30deg); }
+.flor__hoja-tallo--3,
+.flor__hoja-tallo--4 {
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: var(--h);
+  border-bottom-right-radius: var(--h);
+  left: -420%;
+  top: 12%;
+  transform: rotate(-70deg) rotateY(30deg);
+}
+.flor__hoja-tallo--4 { top: 40%; }
+
+/* --- JARDÍN / PASTO --- */
+.flor__pasto {
+  --c: #1a472a;
+  --line-w: 1.5vmin;
+  position: absolute;
+  bottom: 12vmin;
+  left: -7vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 20;
+  transform-origin: bottom center;
+  transform: rotate(-48deg) rotateY(40deg);
+}
+.flor__pasto--1 { animation: movimiento-pasto 2s linear infinite; }
+.flor__pasto--2 { left: 2vmin; bottom: 10vmin; transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg); opacity: 0.8; z-index: 0; animation: movimiento-pasto--2 1.5s linear infinite; }
+
+.flor__pasto--top { width: 7vmin; height: 10vmin; border-top-right-radius: 100%; border-right: var(--line-w) solid var(--c); transform-origin: bottom center; transform: rotate(-2deg); }
+.flor__pasto--bottom { margin-top: -2px; width: var(--line-w); height: 25vmin; background-image: linear-gradient(to top, transparent, var(--c)); }
+
+.flor__hoja-pasto { --size: 10vmin; position: absolute; width: calc(var(--size) * 2.1); height: var(--size); border-top-left-radius: var(--size); border-top-right-radius: var(--size); background-image: linear-gradient(to top, transparent, transparent 30%, var(--c)); z-index: 100; }
+.flor__hoja-pasto--1 { top: -6%; left: 30%; --size: 6vmin; transform: rotate(-20deg); animation: crecer-pasto-ans--1 2s 2.6s backwards; }
+.flor__hoja-pasto--2 { top: -5%; left: -110%; --size: 6vmin; transform: rotate(10deg); animation: crecer-pasto-ans--2 2s 2.4s linear backwards; }
+.flor__hoja-pasto--3 { top: 5%; left: 60%; --size: 8vmin; transform: rotate(-18deg) rotateX(-20deg); animation: crecer-pasto-ans--3 2s 2.2s linear backwards; }
+.flor__hoja-pasto--4 { top: 6%; left: -135%; --size: 8vmin; transform: rotate(2deg); animation: crecer-pasto-ans--4 2s 2s linear backwards; }
+.flor__hoja-pasto--5 { top: 20%; left: 60%; --size: 10vmin; transform: rotate(-24deg) rotateX(-20deg); animation: crecer-pasto-ans--5 2s 1.8s linear backwards; }
+.flor__hoja-pasto--6 { top: 22%; left: -180%; --size: 10vmin; transform: rotate(10deg); animation: crecer-pasto-ans--6 2s 1.6s linear backwards; }
+.flor__hoja-pasto--7 { top: 39%; left: 70%; --size: 10vmin; transform: rotate(-10deg); animation: crecer-pasto-ans--7 2s 1.4s linear backwards; }
+.flor__hoja-pasto--8 { top: 40%; left: -215%; --size: 11vmin; transform: rotate(10deg); animation: crecer-pasto-ans--8 2s 1.2s linear backwards; }
+
+.flor__pasto--capa {
+  position: absolute; top: -10%; right: 0%; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); filter: blur(1.5vmin); z-index: 100;
+}
+
+.flor__pasto-largo {
+  --c: #1a472a;
+  --line-w: 1.5vmin;
+  position: absolute;
+  bottom: 12vmin;
+  left: -7vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 20;
+  transform-origin: bottom center;
+  transform: rotate(-48deg) rotateY(40deg);
+}
+
+.flor__pasto-largo--top {
+  width: 7vmin;
+  height: 10vmin;
+  border-top-right-radius: 100%;
+  border-right: var(--line-w) solid var(--c);
+  transform-origin: bottom center;
+  transform: rotate(-2deg);
+}
+
+.flor__pasto-largo--bottom {
+  margin-top: -2px;
+  width: var(--line-w);
+  height: 25vmin;
+  background-image: linear-gradient(to top, transparent, var(--c));
+}
+
+
+/* --- PASTO DE FONDO --- */
+.pasto-fondo { position: absolute; bottom: 25vmin; left: -42vmin; transform-origin: bottom left; }
+.pasto-fondo .hoja { --w: 15vmin; --h: 40vmin; --c: #1aaa15; position: absolute; bottom: 0; width: var(--w); height: var(--h); border-top-left-radius: 100%; border-left: 2vmin solid #2d6a4f; mask-image: linear-gradient(to top, transparent 20%, var(--color-oscuro)); transform-origin: bottom center; }
+.pasto-fondo--0 { bottom: 0vmin; transform: scale(0.8) rotate(-5deg); }
+.pasto-fondo--0 .hoja { mask-image: linear-gradient(to top, transparent 40%, #028137 80%) !important; }
+.pasto-fondo--0 .hoja--0 { --w: 5vmin; --h: 60vmin; left: -2vmin; transform: rotate(3deg) rotateY(-180deg); }
+.pasto-fondo--0 .hoja--1 { --w: 10vmin; --h: 50vmin; left: -10vmin; transform: rotate(-5deg); }
+.pasto-fondo--0 .hoja--2 { --w: 8vmin; --h: 40vmin; left: -15vmin; transform: rotate(10deg); }
+.pasto-fondo--1 .hoja, .pasto-fondo--2 .hoja { mask-image: linear-gradient(to top, transparent 50%, #2d6a4f 80%) !important; }
+
+/* --- MARIPOSAS --- */
+.contenedor-mariposas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 10; overflow: hidden; }
+.mariposa--animada { position: absolute; width: 25px; height: 25px; transform-style: preserve-3d; opacity: 0; animation: volar-loco 20s linear infinite, aparecer-suave 20s linear infinite; }
+.mariposa--animada:nth-child(even) { transform: scale(0.6); }
+.mariposa__cuerpo { position: absolute; top: 8px; left: 11px; width: 2px; height: 8px; background: #111; border-radius: 1px; z-index: 2; }
+.mariposa__ala { position: absolute; width: 12px; height: 18px; background: rgba(255, 215, 0, 0.8); border-radius: 50% 50% 10% 50%; transform-origin: right center; animation: aleteo-veloz 0.15s ease-in-out infinite alternate; box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+.mariposa__ala--der { left: 12px; border-radius: 50% 50% 50% 10%; transform-origin: left center; }
+.mariposa--animada:nth-child(4n) .mariposa__ala { background: rgba(255, 140, 0, 0.8); }
+.mariposa--animada:nth-child(3n) .mariposa__ala { background: rgba(255, 255, 224, 0.8); }
+
+/* --- LUCES --- */
+.flor__luz {
+  position: absolute; bottom: 0vmin; width: 1vmin; height: 1vmin; background-color: rgb(255, 251, 0); border-radius: 50%; filter: blur(0.2vmin); animation: luz-ans 4s linear infinite backwards;
+}
+.flor__luz:nth-child(odd) { background-color: #ff9100; }
+.flor__luz--1 { left: -2vmin; animation-delay: 1s; }
+.flor__luz--2 { left: 3vmin; animation-delay: 0.5s; }
+.flor__luz--3 { left: -6vmin; animation-delay: 0.3s; }
+.flor__luz--4 { left: 6vmin; animation-delay: 0.9s; }
+.flor__luz--8 { left: -6vmin; animation-delay: 3.5s; }
+
+/* --- KEYFRAMES (Animaciones en español) --- */
+@keyframes movimiento-flor-1 { 0%, 100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
+@keyframes movimiento-flor-2 { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(14deg); } }
+@keyframes movimiento-flor-3 { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(-22deg); } }
+@keyframes florecer { 0% { transform: translateX(-50%) scale(0); } }
+@keyframes crecer-tallo { 0% { height: 0; border-radius: 1vmin; } }
+@keyframes luz-ans { 0% { opacity: 0; transform: translateY(0vmin); } 50% { opacity: 1; transform: translateY(-15vmin) translateX(2vmin); filter: blur(0.2vmin); } 100% { transform: translateY(-30vmin); opacity: 0; filter: blur(1vmin); } }
+@keyframes movimiento-pasto { 0%, 100% { transform: rotate(-48deg) rotateY(40deg); } 50% { transform: rotate(-50deg) rotateY(40deg); } }
+@keyframes movimiento-pasto--2 { 0%, 100% { transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg); } 50% { transform: scale(0.5) rotate(79deg) rotateX(10deg) rotateY(-200deg); } }
+@keyframes crecer-pasto-ans--1 { 0% { transform-origin: bottom left; transform: rotate(-20deg) scale(0); } }
+@keyframes crecer-pasto-ans--2 { 0% { transform-origin: bottom right; transform: rotate(10deg) scale(0); } }
+@keyframes crecer-pasto-ans--3 { 0% { transform-origin: bottom right; transform: rotate(-18deg) scale(0); } }
+@keyframes crecer-pasto-ans--4 { 0% { transform-origin: bottom right; transform: rotate(2deg) scale(0); } }
+@keyframes crecer-pasto-ans--5 { 0% { transform-origin: bottom right; transform: rotate(-24deg) scale(0); } }
+@keyframes crecer-pasto-ans--6 { 0% { transform-origin: bottom right; transform: rotate(10deg) scale(0); } }
+@keyframes crecer-pasto-ans--7 { 0% { transform-origin: bottom right; transform: rotate(-10deg) scale(0); } }
+@keyframes crecer-pasto-ans--8 { 0% { transform-origin: bottom right; transform: rotate(10deg) scale(0); } }
+@keyframes aleteo-veloz { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(75deg); } }
+@keyframes aparecer-suave { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 0.8; } }
+@keyframes volar-loco { 
+    0% { transform: translate(0, 0) rotate(0deg); } 
+    25% { transform: translate(10vw, -20vh) rotate(20deg); }
+    50% { transform: translate(-10vw, -50vh) rotate(-10deg); }
+    75% { transform: translate(15vw, -80vh) rotate(10deg); }
+    100% { transform: translate(0, -110vh) rotate(0deg); }
+}

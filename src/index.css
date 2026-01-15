@@ -1,0 +1,737 @@
+/* --- Configuración General --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Dancing+Script:wght@600&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #010113;
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+}
+
+.main-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* --- Botón de Inicio --- */
+.boton-inicio {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 25px 60px;
+  background: linear-gradient(135deg, #ff69b4, #ff1493);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.4s ease;
+  z-index: 100;
+  font-family: 'Dancing Script', cursive;
+  letter-spacing: 2px;
+}
+
+.boton-inicio span {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  letter-spacing: 1px;
+  display: block;
+  margin-top: 5px;
+}
+
+.boton-inicio:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 0 50px rgba(255, 20, 147, 0.9);
+}
+
+/* --- Tarjeta del Reproductor (NUEVA ESTRUCTURA) --- */
+.player-card {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 340px; /* Un poco más ancha para que quepa bien el verso */
+  min-height: 400px; /* Altura fija para evitar saltos */
+  background: rgba(20, 20, 40, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 20px;
+  color: white;
+  z-index: 1000;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s ease;
+}
+
+/* --- Cabecera (Iconos y Título) --- */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.icon-btn.active {
+  color: #ff69b4; /* Rosa cuando está activo */
+  background: rgba(255, 105, 180, 0.1);
+  transform: scale(1.1);
+}
+
+.song-info-mini {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.scrolling-text {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: white;
+}
+
+/* --- Área de Contenido Central (Donde ocurre la magia) --- */
+.card-content-area {
+  flex: 1; /* Ocupa todo el espacio disponible */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  min-height: 220px;
+}
+
+/* 1. Vista de Álbum (Vinilo giratorio) */
+.album-art-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.thumb-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-thumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  border: 4px solid rgba(25, 25, 25, 0.8);
+  /* Animación de giro como un disco */
+  animation: spin 20s linear infinite;
+  animation-play-state: paused; 
+  position: relative;
+  z-index: 2;
+}
+
+/* El disco gira cuando suena la música */
+.pulse-ring + .main-thumb {
+    animation-play-state: running;
+}
+
+/* Anillo pulsante detrás del disco */
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 105, 180, 0.6);
+  animation: pulse-border 2s infinite;
+  z-index: 1;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes pulse-border {
+  0% { width: 100%; height: 100%; opacity: 1; }
+  100% { width: 140%; height: 140%; opacity: 0; }
+}
+
+/* 2. Vista Playlist (Overlay) */
+/* --- 2. Vista Playlist (Overlay) - CORREGIDO --- */
+.playlist-overlay {
+  position: absolute; /* Esto es clave: lo ancla al área visible */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Ocupa exactamente el espacio disponible, no más */
+  overflow-y: auto; /* Activa el scroll vertical */
+  padding-right: 5px;
+  animation: fadeIn 0.3s ease;
+  background: rgba(20, 20, 40, 0.5); /* Un fondo sutil para que se lea mejor */
+  border-radius: 12px;
+}
+
+/* Scrollbar personalizado y bonito (Estilo Neón) */
+.playlist-overlay::-webkit-scrollbar {
+  width: 6px;
+}
+
+.playlist-overlay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.playlist-overlay::-webkit-scrollbar-thumb {
+  background: #ff69b4; /* Color rosa neón */
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+}
+
+.playlist-overlay::-webkit-scrollbar-thumb:hover {
+  background: #ff1493;
+}
+
+/* Estilo de la lista interna */
+.lista-scrollable {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pista-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 12px 10px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0; /* Evita que los botones se aplasten */
+}
+
+.pista-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding-left: 15px; /* Pequeño desplazamiento al pasar el mouse */
+}
+
+.pista-num {
+  font-size: 0.8rem;
+  color: #ff69b4;
+  margin-right: 15px;
+  font-weight: bold;
+  min-width: 20px;
+}
+
+.pista-name {
+  font-size: 0.9rem;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Puntos suspensivos si el nombre es muy largo */
+}
+
+/* --- 3. SECCIÓN DE VERSÍCULOS (El Frasquito) --- */
+.bible-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.jar-container {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estado: Cerrado */
+.jar-closed {
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.jar-closed:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.jar-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+  animation: float 3s ease-in-out infinite;
+}
+
+.jar-closed p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Estado: Papelito Abierto */
+.paper-slip {
+  background: #fff9e6; /* Color papel viejo/crema */
+  color: #4a3b2a;
+  padding: 20px;
+  width: 85%;
+  border-radius: 2px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  font-family: 'Georgia', serif; /* Fuente más clásica y elegante para biblia */
+  position: relative;
+  transform: rotate(-1deg);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Efecto de cinta adhesiva arriba (detalle visual opcional) */
+.paper-slip::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.verse-text {
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.verse-cite {
+  display: block;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-align: right;
+  color: #8b4513; /* Marrón para la cita */
+  margin-bottom: 15px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding-top: 5px;
+}
+
+.another-one {
+  background: #d2b48c;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto;
+  transition: background 0.2s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.another-one:hover {
+  background: #c1a178;
+}
+
+/* Animaciones de la biblia */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.5) rotate(10deg); }
+  to { opacity: 1; transform: scale(1) rotate(-1deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hidden { display: none; }
+.visible { display: block; }
+
+
+/* --- Controles del Reproductor (Footer) --- */
+.card-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto; /* Empuja los controles al fondo */
+}
+
+.control-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.control-btn:hover { color: white; }
+
+.play-btn-main {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  color: #ff1493;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s;
+}
+
+.play-btn-main:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+/* --- Mensaje Final (Esquina Superior Izquierda) --- */
+.mensaje-final {
+  position: absolute;
+  top: 30px;       /* Pegado arriba */
+  left: 30px;      /* Pegado a la izquierda */
+  width: auto;     /* Ya no ocupa todo el ancho */
+  max-width: 280px; /* Limita el ancho para que se vea elegante */
+  text-align: left; /* Alineado a la izquierda */
+  pointer-events: none;
+  z-index: 50;
+  animation: fade-in 2s ease forwards;
+}
+
+.texto-romantico {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.4rem; /* Mucho más pequeño (antes era 3.5rem) */
+  line-height: 1.4;  /* Espaciado entre líneas para que se lea bien */
+  background: linear-gradient(to right, #fff, #ffb6c1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+  margin: 0;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateX(-20px); } /* Entra desde la izquierda */
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Ajuste para Móviles */
+@media (max-width: 600px) {
+  .mensaje-final {
+    top: 20px;
+    left: 20px;
+    max-width: 200px; /* Más estrecho en celular */
+  }
+  
+  .texto-romantico {
+    font-size: 1.2rem; /* Aún más pequeño en celular */
+  }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Media Query Móvil */
+@media (max-width: 600px) {
+  .player-card {
+    width: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    right: auto;
+  }
+  
+  .texto-romantico { font-size: 2.2rem; top: 10%; }
+  
+  .jar-emoji { font-size: 4rem; }
+  .thumb-container { width: 150px; height: 150px; }
+}
+
+/* --- Modal Flotante (Toast de Versículos) --- */
+.verse-toast {
+  position: fixed;
+  top: 40px; /* Distancia desde arriba */
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  width: 90%;
+  max-width: 450px;
+  z-index: 2000;
+  pointer-events: none; /* Para que no moleste si es invisible */
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.verse-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.toast-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  border-left: 5px solid #ff69b4; /* Borde rosa */
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+  margin-top: 2px;
+}
+
+.toast-text {
+  margin: 0 0 5px 0;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+.toast-cite {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #ff1493;
+  text-align: right;
+}
+
+.close-toast {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto; /* Empuja la X a la derecha */
+  transition: color 0.3s;
+}
+
+.close-toast:hover {
+  color: #ff1493;
+}
+
+/* Ajuste móvil para que no tape la canción si es muy pequeña la pantalla */
+@media (max-width: 600px) {
+  .verse-toast {
+    top: 20px;
+    width: 95%;
+  }
+  .toast-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (Para que se vean los Lirios)
+   Agrega esto al final de tu CSS
+   ========================================= */
+
+/* Tablets y Celulares (Pantallas menores a 768px) */
+@media (max-width: 768px) {
+
+  /* 1. Ajuste del Mensaje Romántico */
+  .mensaje-final {
+    top: 15px;
+    left: 15px;
+    max-width: 60%; /* Ocupa menos ancho para no chocar con nada */
+  }
+
+  .texto-romantico {
+    font-size: 1.1rem; /* Letra más pequeña y delicada */
+    text-shadow: 0 0 5px rgba(255, 105, 180, 0.8); /* Más legible sobre el fondo */
+  }
+
+  /* 2. Tarjeta del Reproductor Compacta */
+  .player-card {
+    width: 90%;          /* Casi todo el ancho */
+    max-width: 350px;    /* Pero no gigante */
+    left: 50%;
+    transform: translateX(-50%); /* Centrado horizontalmente */
+    bottom: 20px;        /* Pegado abajo */
+    right: auto;         /* Quitamos el anclaje derecho */
+    
+    /* Hacemos la tarjeta más bajita para liberar espacio arriba */
+    min-height: auto; 
+    padding: 12px;       /* Menos relleno interno */
+    border-radius: 20px;
+  }
+
+  /* 3. Área central (Disco/Lista/Biblia) más pequeña */
+  .card-content-area {
+    min-height: 160px; /* Reducimos la altura mínima considerablemente */
+  }
+
+  /* 4. Disco (Album Art) más pequeño */
+  .thumb-container {
+    width: 130px;  /* Antes 180px -> Ahora 130px */
+    height: 130px;
+  }
+  
+  .pulse-ring {
+    border-width: 1px; /* Anillo más fino */
+  }
+
+  /* 5. Controles más compactos */
+  .card-controls {
+    gap: 20px;       /* Botones más juntos */
+    padding-top: 10px;
+  }
+
+  .play-btn-main {
+    width: 45px;     /* Botón play más pequeño */
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .control-btn {
+    font-size: 1.4rem;
+  }
+
+  /* 6. Frasquito de Biblia más pequeño */
+  .jar-emoji {
+    font-size: 3.5rem; /* Frasco más pequeño */
+  }
+  
+  .paper-slip {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .verse-text {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  /* 7. Ajuste del Modal (Toast) para que no tape el mensaje */
+  .verse-toast {
+    top: 60px; /* Lo bajamos un poco más para que no tape el mensaje de la esquina */
+    width: 92%;
+  }
+}
+
+/* Celulares muy pequeños (Pantallas tipo iPhone SE o antiguos) */
+@media (max-width: 380px) {
+  .player-card {
+    bottom: 10px;
+    width: 95%;
+  }
+  
+  .thumb-container {
+    width: 110px; /* Aún más pequeño */
+    height: 110px;
+  }
+  
+  .mensaje-final {
+    max-width: 100%; /* Permitimos que ocupe el ancho arriba */
+    text-align: center; /* Centrado si es muy estrecho */
+    left: 0;
+    padding: 0 10px;
+  }
+}
+
+/* Botón flotante para cambiar flor */
+.btn-cambio-flor {
+  position: fixed;
+  top: 20px;
+  right: 20px; /* Si prefieres izquierda cambia 'right' por 'left' */
+  z-index: 2000; /* Muy alto para estar encima de todo */
+  
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-family: 'Arial', sans-serif; /* O tu fuente romántica */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-cambio-flor:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.btn-cambio-flor:active {
+  transform: scale(0.95);
+}
+
+/* Ajuste para móviles */
+@media (max-width: 600px) {
+  .btn-cambio-flor {
+    top: 10px;
+    right: 50%;
+    transform: translateX(50%); /* Centrado arriba en celular */
+    width: max-content;
+    font-size: 0.8rem;
+    padding: 8px 16px;
+  }
+  .btn-cambio-flor:hover {
+    transform: translateX(50%) scale(1.05);
+  }
+}
