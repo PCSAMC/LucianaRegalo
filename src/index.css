@@ -735,3 +735,119 @@ body {
     transform: translateX(50%) scale(1.05);
   }
 }
+
+
+/* --- ESTILOS PARA EL JARDÍN DE PCSAM Y LUYAHUITA --- */
+
+.garden-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.garden-toggle-btn {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  z-index: 2001;
+}
+
+.garden-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1) rotate(45deg);
+}
+
+/* El menú desplegable */
+.garden-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 280px;
+  background: rgba(15, 15, 35, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  transform-origin: top right;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  transform: scale(0.8) translateY(-20px);
+  pointer-events: none;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.garden-container.open .garden-menu {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+.garden-header h3 {
+  font-family: 'Dancing Script', cursive, serif; /* Asumiendo que usas esta fuente */
+  color: #ffd700;
+  margin-bottom: 5px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.garden-header p {
+  color: #ccc;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.garden-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flower-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 15px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.flower-option:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-5px);
+}
+
+.flower-option.selected {
+  background: linear-gradient(90deg, rgba(255,215,0,0.2), transparent);
+  border-left: 4px solid #ffd700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.flower-option .emoji {
+  font-size: 1.5rem;
+}
+
+.flower-option .name {
+  font-size: 1.1rem;
+  font-weight: 500;
+}

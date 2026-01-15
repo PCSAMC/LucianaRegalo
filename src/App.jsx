@@ -2,32 +2,37 @@ import React, { useState, useEffect, useMemo } from 'react';
 import YouTube from 'react-youtube';
 import LirioSVG from './componenets/LirioSVG'; 
 import GirasolesSVG from './componenets/girasoles';
-import { BookHeart, ListMusic, X, RefreshCw } from 'lucide-react'; 
+import MargeritenSVG from './componenets/Margarita'; // Asegúrate que la ruta sea correcta
+import RosesSVG from './componenets/RosasSVG';
+import { BookHeart, ListMusic, X, RefreshCw, Flower2 } from 'lucide-react'; // Agregué Flower2 para el ícono del jardín
 
 function App() {
   const [comenzar, setComenzar] = useState(false);
   const [player, setPlayer] = useState(null);
   const [estaReproduciendo, setEstaReproduciendo] = useState(false);
   
-  // Guardamos toda la info de la canción actual (índice, título, imagen)
+  // Guardamos toda la info de la canción actual
   const [indiceActual, setIndiceActual] = useState(0);
   const [cancionActual, setCancionActual] = useState({ titulo: '', miniatura: null });
   
-  // Estados de visualización
+  // Estados de visualización de paneles
   const [mostrarLista, setMostrarLista] = useState(false);
   const [mostrarBiblia, setMostrarBiblia] = useState(false);
-  const [esGirasol, setEsGirasol] = useState(true);
   
-  // Estado para el versículo manual (el del frasquito - sigue siendo "suerte")
+  // --- NUEVO ESTADO PARA EL JARDÍN ---
+  // Opciones: 'girasol', 'lirio', 'margarita'
+  const [florSeleccionada, setFlorSeleccionada] = useState('girasol'); 
+  const [mostrarJardin, setMostrarJardin] = useState(false); // Para colapsar/expandir el menú del jardín
+  
+  // Estado para el versículo manual
   const [versiculoFrasco, setVersiculoFrasco] = useState(null);
   const [animandoVerso, setAnimandoVerso] = useState(false);
 
-  // NUEVO: Estado para el Modal Automático (Versículo Específico)
+  // Estado para el Modal Automático
   const [modalVisible, setModalVisible] = useState(false);
   const [versoModal, setVersoModal] = useState({ texto: '', cita: '' });
 
-  // --- BASE DE DATOS: CANCIONES + VERSÍCULOS VINCULADOS ---
-  // He unido tus canciones con tus versículos basándome en el sentimiento de la canción.
+  // --- BASE DE DATOS (Misma que tenías) ---
   const PLAYLIST_DATA = useMemo(() => [
     { titulo: "Delicate", verso: { texto: "Como el lirio entre los espinos, así es mi amiga entre las doncellas.", cita: "Cantares 2:2" } },
     { titulo: "Just the Two of Us", verso: { texto: "Mi amado es mío, y yo suya; él apacienta entre los lirios.", cita: "Cantares 2:16" } },
@@ -43,7 +48,7 @@ function App() {
     { titulo: "Until I Found You", verso: { texto: "Mujer ejemplar, ¿quién la hallará? Es más valiosa que las piedras preciosas.", cita: "Proverbios 31:10" } },
     { titulo: "Infinity", verso: { texto: "Las muchas aguas no podrán apagar el amor, ni lo ahogarán los ríos.", cita: "Cantares 8:7" } },
     { titulo: "About You", verso: { texto: "Mi amado ha descendido a su huerto... para recoger lirios.", cita: "Cantares 6:2" } },
-    { titulo: "Anchor", verso: { texto: "Tenemos como ancla del alma, una esperanza segura y firme.", cita: "Hebreos 6:19" } }, // Agregué este porque quedaba perfecto con Anchor
+    { titulo: "Anchor", verso: { texto: "Tenemos como ancla del alma, una esperanza segura y firme.", cita: "Hebreos 6:19" } },
     { titulo: "Next To You", verso: { texto: "Ciertamente el bien y la misericordia me seguirán todos los días de mi vida.", cita: "Salmos 23:6" } },
     { titulo: "Shallow", verso: { texto: "La paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones.", cita: "Filipenses 4:7" } },
     { titulo: "Brújula", verso: { texto: "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.", cita: "Salmos 119:105" } },
@@ -72,7 +77,6 @@ function App() {
     { titulo: "BAILE INOLVIDABLE", verso: { texto: "El corazón alegre hermosea el rostro.", cita: "Proverbios 15:13" } }
   ], []);
 
-  // Versículos aleatorios solo para el frasquito (Juego extra)
   const versiculosRandom = useMemo(() => PLAYLIST_DATA.map(item => item.verso), [PLAYLIST_DATA]);
 
   const playerOptions = useMemo(() => ({
@@ -89,18 +93,12 @@ function App() {
     }
   }), []);
 
-  // --- LÓGICA PRINCIPAL ---
+  // --- FUNCIONES Y USE EFFECTS ---
 
   const actualizarInfo = (target) => {
-    // Obtenemos el índice de la canción actual en la lista de reproducción (0, 1, 2...)
     const index = target.getPlaylistIndex();
     const data = target.getVideoData();
-    
-    // Guardamos el índice para saber qué verso mostrar
-    if (index !== -1 && index !== undefined) {
-        setIndiceActual(index);
-    }
-
+    if (index !== -1 && index !== undefined) setIndiceActual(index);
     if (data) {
       setCancionActual({
         titulo: data.title,
@@ -109,29 +107,20 @@ function App() {
     }
   };
 
-  // 1. DETECTAR CAMBIO DE CANCIÓN Y MOSTRAR VERSO VINCULADO
   useEffect(() => {
     if (cancionActual.titulo && PLAYLIST_DATA[indiceActual]) {
-       // Aquí ocurre la magia: Usamos el índice actual para sacar el verso exacto
        const versoCorrespondiente = PLAYLIST_DATA[indiceActual].verso;
-       
        setVersoModal(versoCorrespondiente);
        setModalVisible(true);
-
-       // Ocultar automáticamente después de 12 segundos (un poco más de tiempo para leer)
-       const timer = setTimeout(() => {
-           setModalVisible(false);
-       }, 12000); 
-
+       const timer = setTimeout(() => { setModalVisible(false); }, 12000); 
        return () => clearTimeout(timer);
     }
   }, [indiceActual, cancionActual.titulo, PLAYLIST_DATA]); 
 
-
   const saltarA = (indice) => {
     if (player) {
       player.playVideoAt(indice);
-      setIndiceActual(indice); // Actualizamos manualmente también
+      setIndiceActual(indice);
       setMostrarLista(false);
     }
   };
@@ -149,11 +138,10 @@ function App() {
     }
   };
 
-  // Funciones de UI
   const toggleLista = () => { setMostrarLista(!mostrarLista); setMostrarBiblia(false); };
   const toggleBiblia = () => { setMostrarBiblia(!mostrarBiblia); setMostrarLista(false); };
+  const toggleJardin = () => { setMostrarJardin(!mostrarJardin); };
 
-  // El frasquito sigue siendo aleatorio (como sacar un papelito de la suerte)
   const sacarPapelito = () => {
     setAnimandoVerso(true);
     setTimeout(() => {
@@ -171,16 +159,13 @@ function App() {
         </button>
       ) : (
         <>
-          {esGirasol ? <GirasolesSVG /> : <LirioSVG />}
+          {/* --- RENDERIZADO CONDICIONAL DE FLORES --- */}
+          {florSeleccionada === 'girasol' && <GirasolesSVG />}
+          {florSeleccionada === 'lirio' && <LirioSVG />}
+          {florSeleccionada === 'margarita' && <MargeritenSVG />}
+          {florSeleccionada === 'rosas' && <RosesSVG />}
           
-          <button 
-            className="btn-cambio-flor" 
-            onClick={() => setEsGirasol(!esGirasol)}
-          >
-            {esGirasol ? <>✨ ¿Prefieres ver Lirios?</> : <>🌻 ¿Estás con ganas de Girasoles?</>}
-          </button>
-          
-          {/* MODAL FLOTANTE - Muestra el verso vinculado a la canción */}
+          {/* MODAL VERSÍCULO */}
           <div className={`verse-toast ${modalVisible ? 'show' : ''}`}>
              <div className="toast-content">
                 <span className="toast-icon">💌</span>
@@ -193,30 +178,68 @@ function App() {
              </div>
           </div>
 
+          {/* --- JARDÍN DE PCSAM Y LUYAHUITA (SELECTOR DE FLORES) --- */}
+          <div className={`garden-container ${mostrarJardin ? 'open' : 'closed'}`}>
+             <button className="garden-toggle-btn" onClick={toggleJardin} title="Abrir el Jardín">
+                <Flower2 size={24} />
+             </button>
+             
+             <div className="garden-menu">
+                <div className="garden-header">
+                   <h3>🌿 El Jardín de Pcsam y Luyahuita 🌿</h3>
+                   <p>¿Qué flor deseas ver hoy, mi amor?</p>
+                </div>
+                <div className="garden-options">
+                   <button 
+                      className={`flower-option ${florSeleccionada === 'girasol' ? 'selected' : ''}`}
+                      onClick={() => setFlorSeleccionada('girasol')}
+                   >
+                      <span className="emoji">🌻</span>
+                      <span className="name">Girasoles</span>
+                   </button>
+
+                   <button 
+                      className={`flower-option ${florSeleccionada === 'lirio' ? 'selected' : ''}`}
+                      onClick={() => setFlorSeleccionada('lirio')}
+                   >
+                      <span className="emoji">🌸</span>
+                      <span className="name">Lirios</span>
+                   </button>
+
+                   <button 
+                      className={`flower-option ${florSeleccionada === 'margarita' ? 'selected' : ''}`}
+                      onClick={() => setFlorSeleccionada('margarita')}
+                   >
+                      <span className="emoji">🌼</span>
+                      <span className="name">Margaritas</span>
+                   </button>
+
+                   <button 
+                      className={`flower-option ${florSeleccionada === 'rosas' ? 'selected' : ''}`}
+                      onClick={() => setFlorSeleccionada('rosas')}
+                   >
+                      <span className="emoji">�</span>
+                      <span className="name">Rosas</span>
+                   </button>
+                </div>
+             </div>
+          </div>
+
+          {/* CARD DEL REPRODUCTOR */}
           <div className={`player-card ${mostrarLista ? 'list-active' : ''}`}>
-            
             {/* Cabecera */}
             <div className="card-header">
-              <button 
-                className={`icon-btn ${mostrarBiblia ? 'active' : ''}`} 
-                onClick={toggleBiblia}
-                title="Frasquito de Versículos Random"
-              >
+              <button className={`icon-btn ${mostrarBiblia ? 'active' : ''}`} onClick={toggleBiblia}>
                 <BookHeart size={20} />
               </button>
 
               <div className="song-info-mini">
                 <span className="scrolling-text">
-                    {/* Usamos el título de nuestra base de datos para que sea más limpio */}
-                    {PLAYLIST_DATA[indiceActual] ? PLAYLIST_DATA[indiceActual].titulo : "Cargando..."}
+                   {PLAYLIST_DATA[indiceActual] ? PLAYLIST_DATA[indiceActual].titulo : "Cargando..."}
                 </span>
               </div>
               
-              <button 
-                className={`icon-btn ${mostrarLista ? 'active' : ''}`} 
-                onClick={toggleLista}
-                title="Lista de Canciones"
-              >
+              <button className={`icon-btn ${mostrarLista ? 'active' : ''}`} onClick={toggleLista}>
                 {mostrarLista ? <X size={20}/> : <ListMusic size={20} />}
               </button>
             </div>
@@ -273,7 +296,6 @@ function App() {
                    </div>
                 </div>
               )}
-
             </div>
 
             {/* Controles */}
@@ -302,7 +324,6 @@ function App() {
             }}
             onPause={() => setEstaReproduciendo(false)}
             onStateChange={(e) => { 
-               // 1 = Reproduciendo, 3 = Buffering, -1 = Unstarted
                if (e.data === 1 || e.data === 3) actualizarInfo(e.target); 
             }}
             className="youtube-hidden" 
